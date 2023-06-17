@@ -1,0 +1,1 @@
+ bflat build .\Program.cs .\SpecialEmojis.cs .\BaseEmoji.cs --target Exe --arch x64 --os windows -Ot --no-reflection --no-stacktrace-data --no-globalization --no-exception-messages --no-pie --no-debug-info

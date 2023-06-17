@@ -1,152 +1,22 @@
-# 👪🗾🤵🐯 Base Emoji 🦧🥅🔝🚏
+# 👪🗾🤵🐯 Base Emoji - C# Edition 🦧🥅🔝🚏
 
 There is base32, there is base64, now there is base-emoji!
 
-## Installation
+## How does it differ from [oktupol/base-emoji](https://github.com/oktupol/base-emoji)?
+1. Its written in C#, therefore usable in .NET
+2. It does not support armor yet.
 
-Install base-emoji as a cli executable using npm:
+## Are the base-emoji-encoded files/texts compatible?
+Currently (as of the latest commit to this repo), yes, if there is no armor.
 
-```bash
-npm install -g @oktupol/base-emoji
-```
+## How to use
 
-or as a library inside your Javascript or Typescript project:
+The intended use for this is as a library. HOWEVER you can build it with [bflat](https://flattened.net/) 
+as a console application. The default implementation of the main method favors windows, therefore uses files for en- and de-code base-emoji ↔ UTF8
 
-```bash
-npm install @oktupol/base-emoji
-```
-
-## Usage
-
-### CLI
-
-- Encode data from stdin:
-
-    ```
-    echo 'Hello World' | base-emoji
-
-    ==> 🐅🚓📿🙉🤍🐝🕎🚥🌿🤛🕓
-    ```
-    
-- Decode with the flag `-d`
-
-    ```
-    echo '🐎🍻🪖🦭🍃🍻🪶🦈🍆🌗👩🍶🕗' | base-emoji -d
-
-    ==> I like emojis
-    ```
-
-- Encode or decode data from a file
-
-    ![Cat](./examples/cat.jpg)
-    <small>[cat.jpg](./examples/cat.jpg) - 2009, [Michael Wilson](https://www.flickr.com/photos/michaelpwilson/5430883069/) CC BY-NC-ND 2.0</small>
-
-    ```
-    base-emoji cat.jpg
-
-    ==>
-    ➿🌾📛🤹🤜😡🗻🦕😀😆📖🤹💅😀😀🙂😀🤪🍙🤹😘😀😀😃😀😀🤣🍶😀😀😀😀
-    😀😀😀🤾🪣🙂🍃😻🧇📺🕎🧾🧇🥻😇🎷👨😁🥄🚇🐪😟🤹😀😀😀🤑🦝😅🍑😀📿
-    🤘💋👗🤹😀🤨...
-    ```
-    <small>[cat.jpg.emoji](./examples/cat.jpg.emoji) - full output of above command</small>
-
-- Direct the output of any command into a file
-    
-    ```
-    base-emoji -d dog.jpg.emoji > dog.jpg
-    ```
-    
-- When encoding, optionally use the `-a` flag to armor the output
-
-    ```
-    base-emoji -a some-document.pdf
-    
-    ==> 
-    🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔢💝🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵
-    🏦👭🪛👞🤥🍑⏳😀😀🤴🚎😲🦥😀😀🍀😀😀🤙🥃🤪😀😀🏃🧪🚿💾😀😀😦👮🚇
-    ...
-    🔃😀😀😀🦄😫🪛🦶👪🥃🖤🕓
-    🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔢💔🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵
-    ```
-    
-- When encoding with armor, optionally use the `--descriptor` option to specify a descriptor
-
-    ```
-    gpg --export-secret-key my@email.tld | base-emoji -a --descriptor '🤫🔑🙊'
-    
-    ==>
-    🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🤫🔑🙊💝🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵
-    🕧💦🦲👍🕞🧏🪝🫕📤🥯🦭🥬🚸🪦🍇🪶🍯🐸🥊➖🐧➿🪠🎁🪥🥌🐝🔙🍦🧂🕞🐴
-    ...
-    🚣🚶💒🦔🦃👂🎱😒🌱⛅🌵🕓
-    🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🤫🔑🙊💔🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵    
-
-- For a complete list of available options, run
-    ```
-    base-emoji --help
-    ```
-
-### Inside a Node project
-
-The base-emoji library can be imported using
-
-CommonJS:
-```javascript
-const { BaseEmoji } = require('@oktupol/base-emoji');
-```
-
-ES6, Typescript:
-```typescript
-import { BaseEmoji } from '@oktupol/base-emoji';
-```
-
-There are two functions:
-
-#### `BaseEmoji.encode()`
-
-Usage:
-```javascript
-const result = BaseEmoji.encode(data, options);
-```
-
-Parameters:
-- `data` (required) being any of:
-  - a string
-  - an ArrayBufferLike (e.g. ArrayBuffer, Uint8Array)
-
-- `options` (optional) - an object with following structure; all keys are optional:
-    ```
-    {
-      armor?: boolean;
-      armorDescriptor?: boolean;
-      wrap?: number;
-    }
-    ```
-    - `armor` - if true, the resulting output will be armored.
-    - `armorDescriptor` - when armored, the value will be used in the header and footer of the output
-    - `wrap` - if provided, wrap after _n_ characters
-    
-#### `BaseEmoji.decode()`
-
-Usage:
-```javascript
-const result = BaseEmoji.decode(data, options);
-```
-
-Parameters:
-- `data` (required) - A base-emoji encoded string
-- `options` (optional) - an object with following structure; all keys are optional:
-    ```
-    {
-      output: 'string' | 'binary'
-    }
-    ```
-    - `output` - return the output as String, if `string`, or as Uint8Array, if `binary`
-    
 ## How does it work
 
-The prinicple is identical to that of base64. In base64, data bits are
+The principle is identical to that of base64. In base64, data bits are
 rearranged from their original 8-tuple bytes into 6-tuples, of which there are
 64, and each of these 6-tuples is then represented with one ascii character.
 
@@ -165,8 +35,6 @@ bytes      |    104 = h    |    105 = i    |     33 = !    |              ...
 DATA       |0 1 1 0 1 0 0 0'0 1.1 0 1 0 0 1'0 0 1 0.0 0 0 1'0 0 0 0 0 0.0 ...
 base-emoji |      417 = 🍒     |      658 = 🌒     |       64 = 😟     |  ...
 ```
-
-The complete list of emojis is located in [emoji-map.json](./emoji-map.json)
 
 ### Padding
 

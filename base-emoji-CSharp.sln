@@ -1,0 +1,22 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "base-emoji-CSharp", "base-emoji-CSharp\base-emoji-CSharp.csproj", "{413EDF99-05FF-4586-8F04-B3C63C9547BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "base-emoji-CSharp.Test", "base-emoji-CSharp.Test\base-emoji-CSharp.Test.csproj", "{6A264991-F367-4E92-A57A-9B839E1C2234}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{413EDF99-05FF-4586-8F04-B3C63C9547BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{413EDF99-05FF-4586-8F04-B3C63C9547BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{413EDF99-05FF-4586-8F04-B3C63C9547BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{413EDF99-05FF-4586-8F04-B3C63C9547BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A264991-F367-4E92-A57A-9B839E1C2234}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A264991-F367-4E92-A57A-9B839E1C2234}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A264991-F367-4E92-A57A-9B839E1C2234}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A264991-F367-4E92-A57A-9B839E1C2234}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

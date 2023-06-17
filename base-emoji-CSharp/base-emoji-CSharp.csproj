@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <RootNamespace>base_emoji_CSharp</RootNamespace>
+<!--        <PublishAot>true</PublishAot>-->
+        <PublishSignleFile>true</PublishSignleFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Remove="Program.cs" />
+    </ItemGroup>
+
+</Project>
