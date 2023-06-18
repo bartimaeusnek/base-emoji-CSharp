@@ -8,7 +8,7 @@ using System.Text;
 
 public class BaseEmoji
 {
-    public static string Encode(ReadOnlySpan<byte> bytes, EncodeOptions options = null)
+    public static string Encode(ReadOnlySpan<byte> bytes, EncodeOptions options = default)
     {
         if (bytes.Length == 0)
         {
@@ -31,7 +31,7 @@ public class BaseEmoji
 
         var emojiString = string.Join("", emojiRepresentation);
 
-        if (options?.Wrap != null)
+        if (options.Wrap != null)
         {
             return Wrap(emojiString, options.Wrap.Value);
         }
@@ -39,25 +39,25 @@ public class BaseEmoji
         return emojiString;
     }
 
-    public static string Encode(string buffer, EncodeOptions options = null)
+    public static string Encode(string buffer, EncodeOptions options = default)
     {
-        var bytes = Encoding.UTF8.GetBytes(buffer).AsSpan();
+        var bytes = options.Encoding.GetBytes(buffer).AsSpan();
         return Encode(bytes, options);
     }
 
-    public static string DecodeString(string buffer)
+    public static string DecodeString(string buffer, EncodeOptions options = default)
     {
-        return Encoding.UTF8.GetString(DecodeBinary(buffer));
+        return options.Encoding.GetString(DecodeBinary(buffer));
     }
 
-    public static string DecodeString(byte[] buffer)
+    public static string DecodeString(byte[] buffer, EncodeOptions options = default)
     {
-        return DecodeString(Encoding.UTF8.GetString(buffer));
+        return options.Encoding.GetString(DecodeBinary(options.Encoding.GetString(buffer)));
     }
 
-    public static byte[] DecodeBinary(byte[] buffer)
+    public static byte[] DecodeBinary(byte[] buffer, EncodeOptions options = default)
     {
-        return DecodeBinary(Encoding.UTF8.GetString(buffer));
+        return DecodeBinary(options.Encoding.GetString(buffer));
     }
 
     public static byte[] DecodeBinary(string buffer)
@@ -66,15 +66,18 @@ public class BaseEmoji
         Rune.DecodeLastFromUtf16(buffer, out var paddingRune, out _);
         var padding = Array.IndexOf(SpecialEmojis.Padding, paddingRune);
         var withoutPaddingChar = padding != -1 ? buffer.AsSpan()[..^2] : buffer.AsSpan();
-        var length = withoutPaddingChar.Length / 2;
-        var runes = length > 1024 ? new int[length].AsSpan() : stackalloc int[length];
-        int index = 0;
+        var runes = new List<int>();
         while (Rune.DecodeFromUtf16(withoutPaddingChar, out var nextRune, out var consumed) == OperationStatus.Done)
         {
             withoutPaddingChar = withoutPaddingChar[consumed..];
-            runes[index++] = Array.IndexOf(SpecialEmojis.Emojis, nextRune);
+            var runeIndex = Array.IndexOf(SpecialEmojis.Emojis, nextRune);
+            if (runeIndex is -1)
+            {
+                throw new InvalidOperationException("Your input is invalid. Check Encoding! Offending rune: "+ nextRune);
+            }
+            runes.Add(runeIndex);
         }
-        var transposed = Transpose(runes, 10, 8);
+        var transposed = Transpose(runes.ToArray(), 10, 8);
         if (padding >= 8)
         {
             transposed.RemoveAt(transposed.Count - 1);
@@ -147,10 +150,25 @@ public class BaseEmoji
         return System.Text.RegularExpressions.Regex.Replace(emojiString, $".{{{wrap}}}(?!$)", "$0\r\n");
     }
 
-    public class EncodeOptions
+    public struct EncodeOptions
     {
-        public bool Armor { get; set; }
-        public string ArmorDescriptor { get; set; }
-        public int? Wrap { get; set; }
+        public EncodeOptions()
+        {
+            Armor = false;
+            ArmorDescriptor = null;
+            Wrap = null;
+            Encoding = Encoding.Default;
+        }
+        public EncodeOptions(bool armor, string armorDescriptor, int? wrap, Encoding encoding)
+        {
+            Armor = armor;
+            ArmorDescriptor = armorDescriptor;
+            Wrap = wrap;
+            Encoding = encoding;
+        }
+        public Encoding Encoding;
+        public bool Armor;
+        public string ArmorDescriptor;
+        public int? Wrap;
     }
 }

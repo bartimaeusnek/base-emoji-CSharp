@@ -1,5 +1,8 @@
 namespace base_emoji_CSharp;
 
+using System;
+using System.Buffers;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -145,22 +148,23 @@ public static class SpecialEmojis
             "❔", "❕", "❗", "💱", "💲", "🔱", "📛", "🔰", "⭕", "✅", "❌", "❎", "➰",
             "➿",
         };
-        Emojis = rawRunes.Select(x =>
-        {
-            Rune.DecodeFromUtf16(x, out var rune, out _);
-            return rune;
-        }).ToArray();
-            
-        Padding = new []{"🕛","🕐","🕑","🕒","🕓","🕔","🕕","🕖","🕗","🕘"}
-                  .Select(x =>
-                  {
-                      Rune.DecodeFromUtf16(x, out var rune, out _);
-                      return rune;
-                  }).ToArray();
+
+        Emojis = rawRunes.ToRuneArray();
+        Padding = new []{"🕛","🕐","🕑","🕒","🕓","🕔","🕕","🕖","🕗","🕘"}.ToRuneArray();
         Armor = new ArmorClass();
         Rune.TryCreate('\ud83d', '\udd35', out Armor._marker);    //🔵
         Rune.TryCreate('\ud83d', '\udc9d', out Armor._beginChar); //💝
         Rune.TryCreate('\ud83d', '\udc94', out Armor._endChar);   //💔
         Rune.TryCreate('\ud83d', '\udd22', out Armor._descriptor);//🔢
+    }
+    
+    private static Rune[] ToRuneArray(this IEnumerable<string> enumerable)
+    {
+        return enumerable.Select(x =>
+        {
+            if (Rune.DecodeFromUtf16(x, out var rune, out _) == OperationStatus.Done)
+                return rune;
+            throw new InvalidOperationException($"{x} is not a rune!");
+        }).ToArray();
     }
 }
